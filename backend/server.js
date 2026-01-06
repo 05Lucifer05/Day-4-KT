@@ -6,12 +6,16 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect(
-  "mongodb+srv://library_user:library_user@librarymanagement.ltlz7cq.mongodb.net/?appName=Librarymanagement"
-)
-.then(() => console.log("Connected to MongoDB Atlas 🚀"))
-.catch(err => console.error("DB Error:", err));
+// Use env variable in cloud, fallback locally
+const MONGO_URI = process.env.MONGO_URI ||
+  "mongodb+srv://library_user:library_user@librarymanagement.ltlz7cq.mongodb.net/libraryDB";
+
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("Connected to MongoDB Atlas 🚀"))
+  .catch(err => console.error("DB Error:", err));
 
 app.use("/api/books", require("./routes/books"));
 
-app.listen(5000, () => console.log("Server running on 5000"));
+// IMPORTANT: Render assigns the port dynamically
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
